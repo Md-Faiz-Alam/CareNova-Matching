@@ -1,0 +1,134 @@
+# CareNova Patient Matching Project
+---
+
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Dataset](#dataset)
+- [Data Preparation](#data-preparation)
+- [Modeling](#modeling)
+- [Evaluation](#evaluation)
+- [API & Deployment](#api--deployment)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+---
+
+## Project Overview
+
+CareNova Patient Matching is a machine learning project designed to classify clinical studies based on their likelihood to meet specific criteria (e.g., recruitment status). The goal is to build an accurate, scalable predictive model leveraging heterogeneous data types — numeric, categorical, and free-text clinical study data — to improve clinical trial matching and recruitment efficiency.
+
+---
+
+## Features
+
+- Comprehensive preprocessing pipeline combining numeric, categorical, and textual data
+- Advanced feature engineering including TF-IDF vectorization on study descriptions
+- State-of-the-art gradient boosting classifier with hyperparameter tuning
+- Robust handling of class imbalance via stratified splits and potential resampling
+- Model evaluation with multiple metrics (Accuracy, ROC AUC, Precision, Recall, F1 Score)
+- RESTful API for easy integration and real-time predictions
+- Clear visualizations: ROC curve, confusion matrix, feature correlations
+
+---
+
+## Dataset
+
+- Data collected from [source or repository name]
+- Includes study details: enrollment numbers, study duration, phases, funding sources, textual summaries, and more
+- Imbalanced target variable with ~80% positive (`study_status=1`) and ~20% negative (`study_status=0`) samples
+
+---
+
+## Data Preparation
+
+- Missing values imputed (median for numeric, 'Unknown' for categorical, empty strings for text)
+- Categorical features one-hot encoded with consistent columns saved for inference
+- Textual fields combined and vectorized using TF-IDF (max 1000 features, English stop words removed)
+- Numeric, categorical, and text features concatenated into a final feature matrix
+
+---
+## Feature Descriptions
+
+| Column Name                     | Description                                                                                      |
+|--------------------------------|------------------------------------------------------------------------------------------------|
+| `study_title`                  | Title of the clinical study or trial.                                                          |
+| `study_status`                 | Target variable indicating if the study meets criteria (1 = match/positive, 0 = no match).     |
+| `brief_summary`                | Brief description summarizing the study objectives and scope.                                  |
+| `conditions`                   | Medical conditions or diseases addressed by the study.                                        |
+| `interventions`                | Treatments, drugs, or procedures tested in the study.                                         |
+| `primary_outcome_measures`    | Main results or endpoints the study aims to measure.                                          |
+| `secondary_outcome_measures`  | Additional outcomes or effects evaluated alongside primary measures.                           |
+| `sponsor`                     | Organization or entity funding or responsible for the study.                                  |
+| `enrollment`                  | Number of participants enrolled in the study.                                                 |
+| `study_type`                  | Type of study design (e.g., Interventional, Observational).                                   |
+| `study_design`                | Specific design characteristics (e.g., Randomized, Open Label).                               |
+| `last_update_posted`          | Date when the study information was last updated.                                             |
+| `locations`                   | Geographic locations where the study is conducted.                                            |
+| `study_duration_days`         | Planned duration of the study in days.                                                        |
+| `sex_all`                    | Indicates if the study includes all sexes (True/False).                                       |
+| `sex_female`                 | Indicates if the study includes female participants (True/False).                             |
+| `sex_male`                   | Indicates if the study includes male participants (True/False).                               |
+| `has_child`                  | Indicates if the study includes child participants (1 = yes, 0 = no).                         |
+| `has_adult`                  | Indicates if the study includes adult participants (1 = yes, 0 = no).                         |
+| `has_older_adult`            | Indicates if the study includes older adult participants (1 = yes, 0 = no).                   |
+| `phase1`                     | Indicates if the study is Phase 1 clinical trial (1 = yes, 0 = no).                           |
+| `phase2`                     | Indicates if the study is Phase 2 clinical trial (1 = yes, 0 = no).                           |
+| `phase3`                     | Indicates if the study is Phase 3 clinical trial (1 = yes, 0 = no).                           |
+| `funder_fed`                 | Funded by federal government (True/False).                                                    |
+| `funder_indiv`               | Funded by individual sponsors (True/False).                                                  |
+| `funder_industry`            | Funded by industry sponsors (True/False).                                                    |
+| `funder_network`             | Funded by research networks or collaborations (True/False).                                  |
+| `funder_nih`                 | Funded by NIH (National Institutes of Health) (True/False).                                  |
+| `funder_other`               | Funded by other sources (True/False).                                                        |
+| `funder_other_gov`           | Funded by other government sources (True/False).                                            |
+| `funder_unknown`             | Funding source unknown (True/False).                                                         |
+| `missing_start_date`         | Indicates if the study start date is missing (1 = missing, 0 = available).                   |
+| `missing_primary_completion_date` | Indicates if the primary completion date is missing (1 = missing, 0 = available).       |
+| `missing_completion_date`    | Indicates if the study completion date is missing (1 = missing, 0 = available).              |
+
+---
+## Modeling
+
+- Classifier: `HistGradientBoostingClassifier` (scikit-learn)
+- Hyperparameter tuning with `RandomizedSearchCV` (parameters: max_iter, learning_rate, max_depth, etc.)
+- Cross-validation used to prevent overfitting and ensure robust performance
+- Optional handling of class imbalance using SMOTE or other resampling methods (recommended)
+
+---
+
+## Evaluation
+
+- Metrics reported on both training (via CV) and test sets:
+  - Accuracy
+  - ROC AUC
+  - Precision
+  - Recall
+  - F1 Score
+- Visualizations include:
+  - ROC Curve
+  - Confusion Matrix
+  - Feature correlation heatmap
+
+---
+
+## API & Deployment
+
+- Flask-based REST API for serving predictions
+- Input accepts JSON with study features and returns predicted match status and probability
+- Includes data preprocessing pipeline for incoming requests (imputation, encoding, vectorization)
+- CORS enabled for cross-domain access
+- Can be containerized with Docker for scalable deployment (not included here)
+
+---
+
+## Installation
+
+1. Clone the repo:
+
+   ```bash
+   git clone https://github.com/Md-Faiz-Alam/carenova-patient-matching.git
+   cd carenova-patient-matching

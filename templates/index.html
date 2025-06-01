@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <meta charset="UTF-8" />
+  <title>Clinical Trial Patient Matching</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 30px;
+    }
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      white-space: normal;
+    }
+    .match {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .no-match {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🧬 Clinical Trial Patient Matching</h2>
+  <form id="matchForm">
+    <div class="grid">
+      <div><label>Sponsor</label><input name="sponsor" type="number" required></div>
+      <div><label>Enrollment</label><input name="enrollment" type="number" required></div>
+      <div><label>Study Type</label><select name="study_type"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select></div>
+      <div><label>Study Design</label><select name="study_design"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+      <div><label>Study Duration (Days)</label><input name="study_duration_days" type="number" step="0.1" required></div>
+      
+      <div><label>Sex: All</label><select name="sex_all"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Sex: Female</label><select name="sex_female"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Sex: Male</label><select name="sex_male"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Includes Children?</label><select name="has_child"><option value="0">0</option><option value="1">1</option></select></div>
+      <div><label>Includes Adults?</label><select name="has_adult"><option value="0">0</option><option value="1">1</option></select></div>
+      <div><label>Includes Older Adults?</label><select name="has_older_adult"><option value="0">0</option><option value="1">1</option></select></div>
+
+      <div><label>Phase 1</label><select name="phase1"><option value="1">Yes</option><option value="0">No</option></select></div>
+      <div><label>Phase 2</label><select name="phase2"><option value="1">Yes</option><option value="0">No</option></select></div>
+      <div><label>Phase 3</label><select name="phase3"><option value="1">Yes</option><option value="0">No</option></select></div>
+
+      <div><label>Funder: Federal</label><select name="funder_fed"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: Individual</label><select name="funder_indiv"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: Industry</label><select name="funder_industry"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: Network</label><select name="funder_network"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: NIH</label><select name="funder_nih"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: Other</label><select name="funder_other"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: Other Gov</label><select name="funder_other_gov"><option value="true">True</option><option value="false">False</option></select></div>
+      <div><label>Funder: Unknown</label><select name="funder_unknown"><option value="true">True</option><option value="false">False</option></select></div>
+
+      <div><label>Missing Start Date?</label><select name="missing_start_date"><option value="0">0</option><option value="1">1</option></select></div>
+      <div><label>Missing Primary Completion Date?</label><select name="missing_primary_completion_date"><option value="0">0</option><option value="1">1</option></select></div>
+      <div><label>Missing Completion Date?</label><select name="missing_completion_date"><option value="0">0</option><option value="1">1</option></select></div>
+       <div><label>Study Title</label><input name="study_title" type="text" required></div>
+    <div><label>Brief Summary</label><textarea name="brief_summary" rows="3" required></textarea></div>
+    <div><label>Conditions</label><textarea name="conditions" rows="3" required></textarea></div>
+    <div><label>Interventions</label><textarea name="interventions" rows="3" required></textarea></div>
+    <div><label>Primary Outcome Measures</label><textarea name="primary_outcome_measures" rows="3" required></textarea></div>
+    <div><label>Secondary Outcome Measures</label><textarea name="secondary_outcome_measures" rows="3" required></textarea></div>
+    <div><label>Locations</label><textarea name="locations" rows="3" required></textarea></div>
+  </div>
+    </div>
+
+    <br>
+    <button type="button" id="autoFillBtn">Auto-Fill Sample</button>
+    <button type="submit">🔍 Predict Match</button>
+
+    <div id="result" class="result"></div>
+  </form>
+
+  <script>
+const sampleData = [
+    {
+    "sponsor": 7,
+    "enrollment": 400,
+    "study_type": 1,
+    "study_design": 2,
+    "study_duration_days": 365.0,
+    "sex_all": true,
+    "sex_female": true,
+    "sex_male": true,
+    "has_child": 0,
+    "has_adult": 1,
+    "has_older_adult": 1,
+    "phase1": 0,
+    "phase2": 1,
+    "phase3": 0,
+    "funder_fed": true,
+    "funder_indiv": false,
+    "funder_industry": false,
+    "funder_network": false,
+    "funder_nih": false,
+    "funder_other": false,
+    "funder_other_gov": false,
+    "funder_unknown": false,
+    "missing_start_date": 0,
+    "missing_primary_completion_date": 0,
+    "missing_completion_date": 0,
+
+    "study_title": "Efficacy of Remdesivir in Hospitalized COVID-19 Patients",
+    "brief_summary": "This study evaluates the antiviral drug Remdesivir for treatment of moderate to severe COVID-19 infection.",
+    "conditions": "COVID-19",
+    "interventions": "Remdesivir",
+    "primary_outcome_measures": "Time to clinical recovery",
+    "secondary_outcome_measures": "Mortality rate at 28 days",
+    "locations": "USA, UK, Canada"
+  },
+  {
+  "sponsor": 3,
+  "enrollment": 150,
+  "study_type": 2,
+  "study_design": 1,
+  "study_duration_days": 180.0,
+  "sex_all": false,
+  "sex_female": true,
+  "sex_male": false,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 0,
+  "phase1": 0,
+  "phase2": 0,
+  "phase3": 1,
+  "funder_fed": false,
+  "funder_indiv": false,
+  "funder_industry": true,
+  "funder_network": false,
+  "funder_nih": false,
+  "funder_other": true,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 3 Trial of Adalimumab in Rheumatoid Arthritis",
+  "brief_summary": "A randomized controlled trial to assess the efficacy and safety of Adalimumab in patients with moderate to severe rheumatoid arthritis.",
+  "conditions": "Rheumatoid Arthritis",
+  "interventions": "Adalimumab (Humira)",
+  "primary_outcome_measures": "Improvement in DAS28 score",
+  "secondary_outcome_measures": "Radiographic progression",
+  "locations": "Germany, France"
+  },
+  {
+  "sponsor": 9,
+  "enrollment": 300,
+  "study_type": 3,
+  "study_design": 3,
+  "study_duration_days": 90.0,
+  "sex_all": true,
+  "sex_female": false,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 0,
+  "phase1": 1,
+  "phase2": 0,
+  "phase3": 0,
+  "funder_fed": false,
+  "funder_indiv": false,
+  "funder_industry": true,
+  "funder_network": true,
+  "funder_nih": false,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 1,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 1 Study of AMG 510 in Advanced Solid Tumors",
+  "brief_summary": "An early-phase clinical trial evaluating safety and dosing of AMG 510 in patients with KRAS-mutated advanced solid tumors.",
+  "conditions": "KRAS-mutated solid tumors",
+  "interventions": "AMG 510 (Sotorasib)",
+  "primary_outcome_measures": "Maximum tolerated dose",
+  "secondary_outcome_measures": "Pharmacokinetics and tumor response",
+  "locations": "USA"
+  },
+  {
+  "sponsor": 4,
+  "enrollment": 180,
+  "study_type": 2,
+  "study_design": 3,
+  "study_duration_days": 60.0,
+  "sex_all": false,
+  "sex_female": true,
+  "sex_male": false,
+  "has_child": 1,
+  "has_adult": 0,
+  "has_older_adult": 0,
+  "phase1": 0,
+  "phase2": 0,
+  "phase3": 0,
+  "funder_fed": false,
+  "funder_indiv": false,
+  "funder_industry": false,
+  "funder_network": true,
+  "funder_nih": false,
+  "funder_other": true,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 1,
+
+  "study_title": "Inhaled Budesonide for Pediatric Asthma",
+  "brief_summary": "Trial evaluating the efficacy of inhaled budesonide to reduce asthma exacerbations in children aged 6-12 years.",
+  "conditions": "Pediatric Asthma",
+  "interventions": "Budesonide inhaler",
+  "primary_outcome_measures": "Frequency of asthma exacerbations",
+  "secondary_outcome_measures": "Improvement in lung function",
+  "locations": "Australia, New Zealand"
+ },
+  
+  {
+  "sponsor": 5,
+  "enrollment": 220,
+  "study_type": 1,
+  "study_design": 2,
+  "study_duration_days": 730.0,
+  "sex_all": true,
+  "sex_female": true,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 1,
+  "phase1": 0,
+  "phase2": 1,
+  "phase3": 0,
+  "funder_fed": false,
+  "funder_indiv": false,
+  "funder_industry": true,
+  "funder_network": false,
+  "funder_nih": false,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 2 Study of Dupilumab in Atopic Dermatitis",
+  "brief_summary": "Assessing safety and efficacy of Dupilumab in patients with moderate-to-severe atopic dermatitis.",
+  "conditions": "Atopic Dermatitis",
+  "interventions": "Dupilumab (Dupixent)",
+  "primary_outcome_measures": "Eczema Area and Severity Index (EASI) score improvement",
+  "secondary_outcome_measures": "Quality of life improvements",
+  "locations": "USA, Canada"
+},
+  {
+  "sponsor": 8,
+  "enrollment": 320,
+  "study_type": 3,
+  "study_design": 1,
+  "study_duration_days": 180.0,
+  "sex_all": true,
+  "sex_female": false,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 0,
+  "phase1": 1,
+  "phase2": 0,
+  "phase3": 0,
+  "funder_fed": true,
+  "funder_indiv": false,
+  "funder_industry": false,
+  "funder_network": true,
+  "funder_nih": false,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 1,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 1 Trial of XYZ-123 in Advanced Melanoma",
+  "brief_summary": "Dose escalation study to evaluate safety of XYZ-123, a novel immunotherapy agent for melanoma.",
+  "conditions": "Advanced Melanoma",
+  "interventions": "XYZ-123 (experimental immunotherapy)",
+  "primary_outcome_measures": "Safety and adverse event profile",
+  "secondary_outcome_measures": "Preliminary anti-tumor activity",
+  "locations": "USA, Japan"
+},
+  
+  {
+  "sponsor": 1,
+  "enrollment": 600,
+  "study_type": 1,
+  "study_design": 3,
+  "study_duration_days": 1095.0,
+  "sex_all": true,
+  "sex_female": true,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 1,
+  "phase1": 0,
+  "phase2": 0,
+  "phase3": 1,
+  "funder_fed": false,
+  "funder_indiv": false,
+  "funder_industry": true,
+  "funder_network": false,
+  "funder_nih": true,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 3 Trial of Empagliflozin in Type 2 Diabetes Mellitus",
+  "brief_summary": "Evaluate cardiovascular outcomes and glycemic control with Empagliflozin in patients with type 2 diabetes.",
+  "conditions": "Type 2 Diabetes Mellitus",
+  "interventions": "Empagliflozin (Jardiance)",
+  "primary_outcome_measures": "Change in HbA1c levels",
+  "secondary_outcome_measures": "Incidence of cardiovascular events",
+  "locations": "Global (USA, Europe, Asia)"
+},
+  
+  {
+  "sponsor": 6,
+  "enrollment": 100,
+  "study_type": 2,
+  "study_design": 1,
+  "study_duration_days": 45.0,
+  "sex_all": false,
+  "sex_female": false,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 0,
+  "phase1": 0,
+  "phase2": 1,
+  "phase3": 0,
+  "funder_fed": false,
+  "funder_indiv": true,
+  "funder_industry": false,
+  "funder_network": false,
+  "funder_nih": false,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 1,
+
+  "study_title": "Efficacy of Sildenafil in Erectile Dysfunction",
+  "brief_summary": "Assessing the efficacy and safety of Sildenafil in men with erectile dysfunction.",
+  "conditions": "Erectile Dysfunction",
+  "interventions": "Sildenafil (Viagra)",
+  "primary_outcome_measures": "Improvement in erectile function",
+  "secondary_outcome_measures": "Adverse events",
+  "locations": "USA"
+},
+{
+  "sponsor": 3,
+  "enrollment": 450,
+  "study_type": 1,
+  "study_design": 2,
+  "study_duration_days": 540.0,
+  "sex_all": true,
+  "sex_female": true,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 1,
+  "phase1": 0,
+  "phase2": 0,
+  "phase3": 1,
+  "funder_fed": true,
+  "funder_indiv": false,
+  "funder_industry": true,
+  "funder_network": false,
+  "funder_nih": false,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 3 Trial of Remdesivir for Hospitalized COVID-19 Patients",
+  "brief_summary": "Evaluating the efficacy and safety of Remdesivir in hospitalized patients with severe COVID-19 infection.",
+  "conditions": "COVID-19",
+  "interventions": "Remdesivir (Veklury)",
+  "primary_outcome_measures": "Time to clinical recovery",
+  "secondary_outcome_measures": "Mortality rate at 28 days",
+  "locations": "USA, Europe, Asia"
+},
+  {
+  "sponsor": 7,
+  "enrollment": 180,
+  "study_type": 2,
+  "study_design": 1,
+  "study_duration_days": 210.0,
+  "sex_all": true,
+  "sex_female": true,
+  "sex_male": false,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 0,
+  "phase1": 1,
+  "phase2": 0,
+  "phase3": 0,
+  "funder_fed": false,
+  "funder_indiv": true,
+  "funder_industry": false,
+  "funder_network": false,
+  "funder_nih": false,
+  "funder_other": true,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 1,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 1 Trial of Viltolarsen for Duchenne Muscular Dystrophy",
+  "brief_summary": "Assessing safety and pharmacokinetics of Viltolarsen in boys with Duchenne Muscular Dystrophy.",
+  "conditions": "Duchenne Muscular Dystrophy",
+  "interventions": "Viltolarsen",
+  "primary_outcome_measures": "Safety and tolerability",
+  "secondary_outcome_measures": "Muscle function tests",
+  "locations": "Japan"
+},
+  
+  {
+  "sponsor": 4,
+  "enrollment": 500,
+  "study_type": 1,
+  "study_design": 3,
+  "study_duration_days": 365.0,
+  "sex_all": true,
+  "sex_female": false,
+  "sex_male": true,
+  "has_child": 0,
+  "has_adult": 1,
+  "has_older_adult": 1,
+  "phase1": 0,
+  "phase2": 1,
+  "phase3": 0,
+  "funder_fed": false,
+  "funder_indiv": false,
+  "funder_industry": true,
+  "funder_network": false,
+  "funder_nih": true,
+  "funder_other": false,
+  "funder_other_gov": false,
+  "funder_unknown": false,
+  "missing_start_date": 0,
+  "missing_primary_completion_date": 0,
+  "missing_completion_date": 0,
+
+  "study_title": "Phase 2 Study of Tocilizumab in Rheumatoid Arthritis",
+  "brief_summary": "Evaluating efficacy and safety of Tocilizumab in patients with moderate to severe rheumatoid arthritis.",
+  "conditions": "Rheumatoid Arthritis",
+  "interventions": "Tocilizumab (Actemra)",
+  "primary_outcome_measures": "Reduction in joint swelling and pain",
+  "secondary_outcome_measures": "Improvement in physical function",
+  "locations": "Europe"
+},
+
+  
+ 
+  {
+    sponsor: 1,
+    enrollment: 100,
+    study_type: 0,
+    study_design: 1,
+    study_duration_days: 180.0,
+    sex_all: true,
+    sex_female: false,
+    sex_male: false,
+    has_child: 1,
+    has_adult: 1,
+    has_older_adult: 0,
+    phase1: 1,
+    phase2: 0,
+    phase3: 0,
+    funder_fed: true,
+    funder_indiv: false,
+    funder_industry: false,
+    funder_network: false,
+    funder_nih: true,
+    funder_other: false,
+    funder_other_gov: false,
+    funder_unknown: false,
+    missing_start_date: 0,
+    missing_primary_completion_date: 0,
+    missing_completion_date: 0,
+
+    // You can add dummy text fields for testing if your backend expects them
+    study_title: "Effect of Drug A on Condition X",
+    brief_summary: "A study to evaluate Drug A...",
+    conditions: "Condition X",
+    interventions: "Drug A",
+    primary_outcome_measures: "Reduction in symptoms",
+    secondary_outcome_measures: "Quality of life improvement",
+    locations: "USA"
+  },
+  {
+    sponsor: 2,
+    enrollment: 250,
+    study_type: 1,
+    study_design: 2,
+    study_duration_days: 365.0,
+    sex_all: false,
+    sex_female: true,
+    sex_male: false,
+    has_child: 0,
+    has_adult: 1,
+    has_older_adult: 1,
+    phase1: 0,
+    phase2: 1,
+    phase3: 0,
+    funder_fed: false,
+    funder_indiv: true,
+    funder_industry: false,
+    funder_network: false,
+    funder_nih: false,
+    funder_other: true,
+    funder_other_gov: false,
+    funder_unknown: false,
+    missing_start_date: 0,
+    missing_primary_completion_date: 1,
+    missing_completion_date: 0,
+
+    study_title: "Trial on Therapy B",
+    brief_summary: "Testing Therapy B for condition Y...",
+    conditions: "Condition Y",
+    interventions: "Therapy B",
+    primary_outcome_measures: "Improvement in function",
+    secondary_outcome_measures: "Side effects",
+    locations: "Europe"
+  }
+];
+
+  document.getElementById('autoFillBtn').onclick = () => {
+  const form = document.getElementById('matchForm');
+  // Randomly pick one sample to autofill
+  const sample = sampleData[Math.floor(Math.random() * sampleData.length)];
+  
+  for (const key in sample) {
+    const elem = form.elements[key];
+    if (!elem) continue;
+
+    // Handle different input types properly
+    if (elem.type === 'select-one') {
+      // For select dropdowns, assign string value
+      if (typeof sample[key] === 'boolean') {
+        elem.value = sample[key] ? 'true' : 'false';
+      } else {
+        elem.value = sample[key];
+      }
+    } 
+    else if (elem.type === 'checkbox') {
+      // For checkbox, assign checked boolean
+      elem.checked = Boolean(sample[key]);
+    }
+    else if (elem.type === 'number') {
+      elem.value = sample[key];
+    }
+    else if (elem.type === 'text' || elem.tagName.toLowerCase() === 'textarea') {
+      // For text input or textarea, assign string value
+      elem.value = sample[key];
+    }
+    else {
+      // fallback for other input types
+      elem.value = sample[key];
+    }
+  }
+};
+
+document.getElementById('matchForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+  const payload = {};
+  
+  for (const [key, value] of formData.entries()) {
+    if (value === 'true') payload[key] = true;
+    else if (value === 'false') payload[key] = false;
+    else if (!isNaN(value) && value !== '') {
+      payload[key] = value.includes('.') ? parseFloat(value) : parseInt(value, 10);
+    } else {
+      payload[key] = value;
+    }
+  }
+  
+  console.log('Payload:', payload);
+
+  const resultDiv = document.getElementById('result');
+  resultDiv.textContent = 'Predicting...';
+  resultDiv.className = 'result';
+
+  try {
+    const response = await fetch('http://localhost:5000/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+    const data = await response.json();
+
+    // Safe fallback values
+    const match = typeof data.match === 'boolean' ? data.match : false;
+    const probability = typeof data.probability === 'number' ? data.probability : 0;
+
+    const matchText = match ? "🎉 MATCH FOUND" : "❌ NO MATCH";
+    const matchClass = match ? "match" : "no-match";
+    const probabilityPercent = (probability * 100).toFixed(2);
+
+    resultDiv.innerHTML = `
+      ${matchText}<br/>
+      Probability: <strong>${probabilityPercent}%</strong>
+    `;
+    resultDiv.className = `result ${matchClass}`;
+
+  } catch (error) {
+    resultDiv.textContent = `Error: ${error.message}`;
+    resultDiv.className = 'result no-match';
+  }
+});
+  </script>
+</body>
+</html>
