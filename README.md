@@ -1,4 +1,4 @@
-CareNova Patient Matching Project 🧠💊
+# CareNova Patient Matching Project 🧠💊
 A clinical trial intelligence system powered by machine learning to predict patient-study matches, streamline recruitment, and improve healthcare research outcomes.
 
 🧾 Table of Contents
