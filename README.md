@@ -1,67 +1,103 @@
 # CareNova Patient Matching Project 🧠💊
+
 A clinical trial intelligence system powered by machine learning to predict patient-study matches, streamline recruitment, and improve healthcare research outcomes.
 
-🧾 Table of Contents
+## 🧾 Table of Contents
 
 📌 Project Overview
+
 ✨ Features
+
 📊 Dataset
+
 🧹 Data Preparation
+
 📌 Feature Descriptions
+
 🧠 Modeling
+
 📈 Evaluation
+
 🚀 API & Deployment
+
 ⚙️ Installation
+
 ▶️ Usage
+
 🤝 Contributing
+
 📄 License
+
 📬 Contact
 
-📌 Project Overview
+---
+## 📌 Project Overview
+
 CareNova aims to improve clinical trial recruitment by predicting whether a trial will match a patient or not using machine learning. It works on structured + unstructured data (text, category, number) and predicts the likelihood of trial eligibility, streamlining healthcare research and reducing cost and time.
+
 ---
 
-✨ Features
+## ✨ Features
 
 ✅ Clean preprocessing pipeline for numeric, categorical, and text data
+
 🧠 TF-IDF on clinical summaries for semantic insight
+
 🔍 Feature engineering + missing value imputation
+
 📈 Advanced model using HistGradientBoostingClassifier
+
 ⚖️ Handles class imbalance smartly
-📊 Model metrics: ROC-AUC, Accuracy, F1, etc.
+
+📊 Model metrics: ROC-AUC, Accuracy, F1, etc
+
 🌐 Flask-based REST API for predictions
+
 ---
 
-📊 Dataset
+## 📊 Dataset
 
 **Source**: [ClinicalTrials.gov](https://clinicaltrials.gov/)
+
 This dataset includes real-world clinical trial metadata such as:
-   Study titles, summaries, conditions, interventions
-   Enrollment numbers, study phases, durations
-   Funding sources, study design, demographic inclusion
+
+- Study titles, summaries, conditions, interventions
+- Enrollment numbers, study phases, durations
+- Funding sources, study design, demographic inclusion
+
 **Target Variable**: `study_status`
-   `1`: Study matches patient or inclusion criteria
-   `0`: Study does not match
+  
+- `1`: Study matches patient or inclusion criteria
+  
+- 0`: Study does not match
+  
 **Note**: The data is imbalanced with ~80% positive and ~20% negative labels
+
 ---
 
-🧹 Data Preparation
+## 🧹 Data Preparation
 
-Missing Values:
+- Missing Values:
+
 Numeric: median imputation
 
-Categorical: "Unknown"
+- Categorical: "Unknown"
+
 Text: empty string
 
-Text Vectorization:
+- Text Vectorization:
+
 TF-IDF (max 1000 features, English stop words)
 
-Categorical:
+- Categorical:
+
 One-hot encoded
 
-Final Matrix: All features concatenated and normalized
+- Final Matrix: All features concatenated and normalized
+
 ---
-🧾 Feature Descriptions
+
+## 🧾 Feature Descriptions
 
 | **Feature Name**                  | **What It Means**                                                                             |
 | --------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -101,20 +137,25 @@ Final Matrix: All features concatenated and normalized
 | `missing_completion_date`         | 1/0: If the study's final completion date is missing.                                         |
 
 ---
+
 ## 🧠 Modeling
 
 📌 **Model**: [HistGradientBoostingClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingClassifier.html) from scikit-learn
+
 🔁 Cross-validation used to prevent overfitting and ensure generalization
+
 🎯 Tuned with [RandomizedSearchCV](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.RandomizedSearchCV.html)
+
 🔧 Key Parameters tuned:
   `max_iter`
   `learning_rate`
   `max_depth`
+  
 ⚖️ Optional: Use of [SMOTE](https://imbalanced-learn.org/stable/references/generated/imblearn.over_sampling.SMOTE.html) or under-sampling to handle class imbalance
 
 ---
 
-📈 Evaluation
+## 📈 Evaluation
 
 **📊 Metrics Used:**
 • Accuracy  
@@ -139,40 +180,51 @@ Can be containerized with Docker for scalable deployment (not included here)
 
 ---
 
-⚙️ Installation
+## ⚙️ Installation
 
-# Clone the repo
+### Clone the repo
+
 git clone https://github.com/Md-Faiz-Alam/carenova-patient-matching.git
 cd carenova-patient-matching
 
-# Create virtual environment (optional but recommended)
+### Create virtual environment (optional but recommended)
+
 python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 
-# Install dependencies
+### Install dependencies
+
 pip install -r requirements.txt
 
 ---
-▶️ Usage
-🔬 Run Model Training
+
+## ▶️ Usage
+
+#### 🔬 Run Model Training
 python train_model.py
 
-🧪 Evaluate Model
+#### 🧪 Evaluate Model
+
 python evaluate_model.py
 
-🌐 Run the API
+#### 🌐 Run the API
 python app.py
 
 Send a POST request to:
 http://localhost:5000/predict
 
 ---
-🤝 Contributing:
+
+## 🤝 Contributing:
 
 Fork the project
+
 Create your branch (git checkout -b feature/xyz)
+
 Commit your changes (git commit -m 'Add feature')
+
 Push and open a Pull Request
+
 ---
 
 ## 📬 Contact
@@ -183,4 +235,5 @@ Push and open a Pull Request
 💻 GitHub: [Md-Faiz-Alam](https://github.com/Md-Faiz-Alam)
 
 ---
-⭐ If you find this project helpful, consider giving it a star!
+
+## ⭐ If you find this project helpful, consider giving it a star!
